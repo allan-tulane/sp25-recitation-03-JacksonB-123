@@ -29,6 +29,7 @@ def split_number(vec):
 
 def bit_shift(number, n):
     # append n 0s to this number's binary string
+    
     return binary2int(number.binary_vec + ['0'] * n)
     
 def pad(x,y):
@@ -50,16 +51,30 @@ def quadratic_multiply(x, y):
 
 def _quadratic_multiply(x, y):
     ### TODO
-    pass
+    xvec, yvec = pad(x.binary_vec, y.binary_vec)
+    if x.decimal_val <=1 and y.decimal_val <=1:
+        return BinaryNumber(x.decimal_val * y.decimal_val)
+    xL, xR = split_number(xvec)
+    yL, yR = split_number(yvec)
+    p1 = _quadratic_multiply(xL, yL)
+    p2 = _quadratic_multiply(xR, yR)
+    p3 = _quadratic_multiply(BinaryNumber(xL.decimal_val + xR.decimal_val),BinaryNumber(yL.decimal_val + yR.decimal_val))
+    result = bit_shift(p1, len(xvec))
+    result =BinaryNumber(result.decimal_val + bit_shift(BinaryNumber(p3.decimal_val - p1.decimal_val - p2.decimal_val), len(xvec)//2).decimal_val)
+    result = BinaryNumber(result.decimal_val + p2.decimal_val)
+    return result
+    
+
     ###
 
 
     
-    
-def test_quadratic_multiply(x, y, f):
+ # I had to rename test_quadratic_multiply to quadratic_multiply_time because replic was treating it as a test runner.   
+def quadratic_multiply_time(x, y, f):
     start = time.time()
     # multiply two numbers x, y using function f
-    
+    result = f(BinaryNumber(x), BinaryNumber(y))
+    assert(result == x*y)
     return (time.time() - start)*1000
 
 
